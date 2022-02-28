@@ -62,12 +62,47 @@
       background: black;
       position: absolute;
       top: 50%;
+      transform-origin: 100%; /* this starts the rotation at the beginning of the x-axis and not in the middle of the element (which is the default 50%) */
+      transform: rotate(90deg); /* this rotates the whole element from horizontal to vertical */
+      transition: all 0.05s; /* this is how fast you want it to transition */
+      transition-timing-function: cubic-bezier(0.1, 2.7, 0.58, 1); /* this gives a variable speed from start to end during the transition */
     }
 
   </style>
 
   <script>
 
+    const secondHand = document.querySelector(".second-hand");
+    const minuteHand = document.querySelector(".min-hand");
+    const hourHand = document.querySelector(".hour-hand");
+
+    function setDate() {
+      //console.log("Hi");
+
+      const now = new Date();
+
+      const seconds = now.getSeconds();
+      //The second divided by total number of seconds multiplied by total degress in a circle to get degrees of second, then add 90 to offset 90deg rotation above
+      const secondsDegrees = ((seconds / 60) * 360) + 90; 
+      secondHand.style.transform = `rotate(${secondsDegrees}deg)`;
+      //console.log(seconds);
+
+      const minutes = now.getMinutes();
+      /* The minute divided by total number of minutes multiplied by total degress in a circle to get degrees of minute, then add the second divided by total seconds
+      multiplied by 6 degrees b/c 360/60 minutes = 6 degrees, then add 90 to offset 90deg rotation above, THIS MAKES MINUTE HAND MOVE WITH EACH PASSING SECOND */
+      const minutesDegrees = ((minutes / 60) * 360) + ((seconds/60)*6) + 90;
+      minuteHand.style.transform = `rotate(${minutesDegrees}deg)`
+      //console.log(minutes);
+
+      const hours = now.getHours();
+      /* The hour divided by total number of hours in clock multiplied by total degress in a circle to get degrees of hour, then add the minute divided by total minutes
+      multiplied by 30 degrees b/c 360/12 hours = 30 degrees, then add 90 to offset 90deg rotation above, THIS MAKES HOUR HAND MOVE WITH EACH PASSING MINUTE */
+      const hoursDegrees = ((hours / 12) * 360) + ((minutes/60)*30) + 90;
+      hourHand.style.transform = `rotate(${hoursDegrees}deg)`
+      //console.log(hours);
+    };
+
+    setInterval(setDate, 1000);    
 
   </script>
 </body>
