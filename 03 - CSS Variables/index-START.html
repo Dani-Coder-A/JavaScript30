@@ -21,6 +21,24 @@
   <img src="https://source.unsplash.com/7bwQXzbF6KE/800x500">
 
   <style>
+    /* Declare the CSS variables on the highest element root (similar to html) and assign default values to the variables */
+    :root {
+      --base: #ffc600;
+      --spacing: 10px;
+      --blur: 10px;
+    }
+
+    /* Start using the defined variables by writing var and passing it the variables. The -- is used with variables in CSS. */
+    img {
+      padding: var(--spacing);
+      background: var(--base);
+      filter: blur(var(--blur));
+    }
+
+    /* Update the span element with same color as img background */
+    .hl {
+      color: var(--base);
+    }
 
     /*
       misc styles, nothing to do with CSS variables
@@ -42,9 +60,32 @@
     input {
       width: 100px;
     }
+
   </style>
 
   <script>
+    /* Select all three of the inputs so when they change the CSS variables will be updated with the correct values */
+    const inputs = document.querySelectorAll(".controls input");
+
+    /* Create the function that handles the update */
+    function handleUpdate () {
+      //console.log(this.value);
+
+      /* Both the sizing and blur variables have data-sizing as attribute to add on "px" to the value so create variable to target the "px", also use the || operator
+      and put value as empty "" to target base variable that has no data-sizing attribute so the result will not come out as undefined */
+      const suffix = this.dataset.sizing || "";
+      //console.log(suffix);
+      //console.log(this.name);
+
+      //Select the entire document, which is root element, and set property for spacing, base, or blur
+      document.documentElement.style.setProperty(`--${this.name}`, this.value + suffix);
+    }
+
+    //Add event listener for each input of all the inputs selected by using the forEach() method
+    inputs.forEach(input => input.addEventListener("change", handleUpdate));
+    inputs.forEach(input => input.addEventListener("mousemove", handleUpdate));
+
+
   </script>
 
 </body>
