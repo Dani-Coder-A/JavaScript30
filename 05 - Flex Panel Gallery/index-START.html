@@ -19,6 +19,7 @@
       margin: 0;
     }
     
+    /* The * selects all the elements, *:after inserts something after content of all elements, *:before inserts something before content of all elements */
     *, *:before, *:after {
       box-sizing: inherit;
     }
@@ -26,6 +27,7 @@
     .panels {
       min-height: 100vh;
       overflow: hidden;
+      display: flex;
     }
 
     .panel {
@@ -43,6 +45,11 @@
       font-size: 20px;
       background-size: cover;
       background-position: center;
+      flex: 1; /* Each of the panels will evenly distribute the extra space */
+      display: flex;
+      justify-content: center;
+      flex-direction: column;
+      align-items: center;
     }
 
     .panel1 { background-image:url(https://source.unsplash.com/gYl-UtwNg_I/1500x1500); }
@@ -52,11 +59,23 @@
     .panel5 { background-image:url(https://source.unsplash.com/3MNzGlQM7qs/1500x1500); }
 
     /* Flex Children */
+
+    /* .panel > * Selects all the elements that are children of the parent elements with class of panel */
     .panel > * {
       margin: 0;
       width: 100%;
       transition: transform 0.5s;
+      flex: 1 0 auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
+
+    .panel > *:first-child { transform: translateY(-100%); } /* The negative % takes the element up */
+    .panel.open-active > *:first-child { transform: translateY(0); }
+    .panel > *:last-child { transform: translateY(100%); } /* The positive % takes the element down */ 
+    .panel.open-active > *:last-child { transform: translateY(0); }
+
 
     .panel p {
       text-transform: uppercase;
@@ -65,11 +84,13 @@
       font-size: 2em;
     }
     
+    /* The p:nth-child(2) selects every paragraph element that is the 2nd of it's parent */
     .panel p:nth-child(2) {
       font-size: 4em;
     }
 
     .panel.open {
+      flex: 5; /* This means when the panel element has an open class it will grow to five times the amount of extra space compared to the rest of the panels */
       font-size: 40px;
     }
 
@@ -105,6 +126,21 @@
   </div>
 
   <script>
+
+    const panels = document.querySelectorAll(".panel");
+
+    function toggleOpen () {
+      this.classList.toggle("open");
+    }
+
+    function toggleActive (e) {
+      if (e.propertyName.includes("flex")) {   /* Need the if statement b/c multiple properties transitioned and need to single out just one property */
+      this.classList.toggle("open-active");
+      }
+    }
+
+    panels.forEach(panel => panel.addEventListener("click", toggleOpen));
+    panels.forEach(panel => panel.addEventListener("transitionend", toggleActive));
 
   </script>
 
