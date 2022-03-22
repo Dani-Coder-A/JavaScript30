@@ -7,6 +7,60 @@
 <body>
 <canvas id="draw" width="800" height="800"></canvas>
 <script>
+
+  const canvas = document.querySelector("#draw");
+  const ctx = canvas.getContext("2d");    // The getContext() method picks either 2d or 3d for drawing inside the canvas element
+
+  canvas.width = window.innerWidth;      // We need to reset the width and height of the canvas, where the default is 800 x 800, to the size of the browser window
+  canvas.height = window.innerHeight;
+
+  ctx.strokeStyle = "#BADA55";   // This picks a color to start with
+  ctx.lineJoin = "round";     // This states whether when a line meets another line if it should be squared off or rounded  
+  ctx.lineCap = "round";    // This states whether the end of a line should be squared off or rounded
+  ctx.lineWidth = 100;
+
+  let isDrawing = false;   // This states that when the mouse is clicked down it draws and is set to true, otherwise when the mouse is not clicked down it is false
+  let lastX = 0;         // This states where the line starts and where the line ends on the x-axis
+  let lastY = 0;        // This states where the line start and where the line ends on the y-axis
+  let hue = 0;          // This sets the hue to red per mothereffinghsl.com
+  let direction = true;  // This states the direction will be building up
+
+  function draw (e) {
+    if(!isDrawing) return;  // This stops the function from running when the user is not moused down
+    console.log(e);
+    ctx.strokeStyle = `hsl(${hue}, 100%, 50%)`;   // This sets the hue to the hue variable, 100% saturation, 50% lightness
+    ctx.beginPath();   // Begins a line path
+    ctx.moveTo(lastX, lastY);  // Where the line path starts from
+    ctx.lineTo(e.offsetX, e.offsetY);  // Where the line path goes to or ends
+    ctx.stroke();   // This method actually draws the path that's been defined with the moveTo and lineTo methods
+    lastX = e.offsetX;  // This changes the x-axis position to where the mouse is 
+    lastY = e.offsetY;  // This changes the y-axis position to where the mouse is
+    hue++ // This increments the hue by 1 as you move the mouse and draw
+    if (hue >= 360) {
+      hue = 0;          // This starts the hue back to red once it hits 360 as red is 0
+    }
+
+    if (ctx.lineWidth >= 100 || ctx.lineWidth <= 1) {
+      direction = !direction;     // This states to flip the direction of line width once it's above 100 or below 1
+    }
+
+    if (direction) {
+      ctx.lineWidth++;       // When the direction is set to true and building up the line width increments by 1
+    }
+    else {
+      ctx.lineWidth--;   // When the direction is set to false and going down the line width decrements by 1
+    }
+  };
+
+  canvas.addEventListener("mousemove", draw);
+  canvas.addEventListener("mousedown", (e) => {
+    isDrawing = true;
+    lastX = e.offsetX;  // This changes the x-axis position to where the mouse is when it is clicked down
+    lastY = e.offsetY;  // This changes the y-axis position to where the mouse it when it is clicked down
+  });
+  canvas.addEventListener("mouseup", () => isDrawing = false);
+  canvas.addEventListener("mouseout", () => isDrawing = false);  // This states when the mouse goes out of the window the user is not drawing or clicked down
+
 </script>
 
 <style>
