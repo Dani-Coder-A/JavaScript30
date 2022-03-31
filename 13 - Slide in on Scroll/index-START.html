@@ -43,7 +43,7 @@
   </div>
 
   <script>
-    function debounce(func, wait = 20, immediate = true) {
+    function debounce(func, wait = 20, immediate = true) {  //The debounce function causes the function that gets passed to it to only run every 20 milliseconds
       var timeout;
       return function() {
         var context = this, args = arguments;
@@ -56,7 +56,30 @@
         timeout = setTimeout(later, wait);
         if (callNow) func.apply(context, args);
       };
-    }
+    };
+
+    const sliderImages = document.querySelectorAll(".slide-in");
+
+    function checkSlide (e) {
+      //console.log(e);
+      console.log(window.scrollY);  //This tells you how far down in pixels we are scrolled from the top of the window
+      sliderImages.forEach(sliderImage => {
+        const slideInAt = (window.scrollY + window.innerHeight) - //The innerHeight gives you the pixel level for where you currently are at the bottom of the window
+          (sliderImage.height / 2);    //This gives you the height of the image divided by 2, which is 50% the total height
+        //This tells you how far down the top of the image is from the very top of the window, plus height of whole image to get the bottom of the image
+        const imageBottom = sliderImage.offsetTop + sliderImage.height;   
+        const isHalfShown = slideInAt > sliderImage.offsetTop;
+        const isNotScrolledPast = window.scrollY < imageBottom;
+        if (isHalfShown && isNotScrolledPast) {
+          sliderImage.classList.add("active");
+        }
+        else {
+          sliderImage.classList.remove("active");
+        }
+      });
+    };
+
+    window.addEventListener("scroll", debounce(checkSlide));
 
   </script>
 
