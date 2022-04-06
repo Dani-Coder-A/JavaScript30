@@ -28,7 +28,57 @@
 <script>
   const addItems = document.querySelector('.add-items');
   const itemsList = document.querySelector('.plates');
-  const items = [];
+  const items = JSON.parse(localStorage.getItem("items")) || [];  //On page load pull what was stored and if nothing stored, set the array as empty
+
+  function addItem (e) {
+
+    e.preventDefault();
+
+    const text = this.querySelector("[name=item]").value   //This targets the entire form and name=item targets the element in the form with that name value
+
+    const item = {
+      text,          //This is ES6 shorthand for text: text
+      done: false
+    }
+
+    items.push(item);
+
+    populateList(items, itemsList);
+
+    localStorage.setItem("items", JSON.stringify(items));
+
+    this.reset();  //This targets the form element which has a reset method
+  };
+
+  {/* Set the plates placeholder for the items array as an empty array 
+      so if forget to pass the items array we just loop over an empty array 
+      instead of the function not working and the platesList is a placeholder for the itemsList */}
+  function populateList (plates = [], platesList) {   
+    platesList.innerHTML = plates.map((plate, i) => {
+      return `
+        <li>
+          <input type="checkbox" data-index=${i} id="item${i}" ${plate.done ? "checked": ""} />  
+          <label for="item${i}">${plate.text}</label>
+        </li>  
+      `;
+    }).join("");   //This will take the array we are mapping over and return a string 
+  };  //An input's checked attribute will always make it checked even if checked is set to false so used a ternary operator
+
+  function toggleDone (e) {
+    if (!e.target.matches("input")) return;
+
+    const el = e.target;
+    const index = el.dataset.index;
+    items[index].done = !items[index].done;
+
+    localStorage.setItem("items", JSON.stringify(items))
+    populateList(items, itemsList);
+  };
+
+  addItems.addEventListener("submit", addItem);
+  itemsList.addEventListener("click", toggleDone);
+
+  populateList(items, itemsList);  //This calls the function on page load when first opened up
 
 </script>
 
